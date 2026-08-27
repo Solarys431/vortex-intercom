@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:'Inter';src:url('../fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:'Inter';src:url('../fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:'JetBrains Mono';src:url('../fonts/JetBrainsMono-500.woff2') format('woff2');font-weight:500;font-display:block}
+  :root{--void:#08090b;--panel:#0e1216;--line:rgba(255,255,255,.08);--cyan:#3fd7ea;--red:#ff4d54;--ink:#e9eef2;--dim:#7a848f}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#050607;padding:30px;font-family:'Inter'}
+  .n1{position:relative;width:1080px;display:grid;grid-template-columns:1fr 1.05fr;gap:34px;align-items:start;
+    background:linear-gradient(180deg,#0a0c0f,#08090b);border:1px solid var(--line);border-radius:18px;padding:30px 32px 34px;overflow:hidden}
+  .kick{grid-column:1/-1;margin-bottom:6px}
+  .kick .e{font-family:'JetBrains Mono';font-weight:500;font-size:12px;letter-spacing:.16em;color:var(--cyan);text-transform:uppercase}
+  .kick .s{font-family:'Inter';font-weight:500;font-size:15px;color:var(--dim);margin-top:8px}
+  /* card IFB */
+  .ifb{background:linear-gradient(180deg,rgba(255,77,84,.06),rgba(255,77,84,.02));border:1px solid rgba(255,77,84,.4);border-radius:14px;padding:20px 20px 22px;box-shadow:0 0 0 1px rgba(255,77,84,.12)}
+  .ifb .r1{display:flex;align-items:center;justify-content:space-between}
+  .ifb .nm{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk';font-weight:700;font-size:19px;color:var(--ink)}
+  .ifb .nm .d{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 9px var(--red)}
+  .ifb .pgm{font-family:'JetBrains Mono';font-weight:500;font-size:10px;letter-spacing:.1em;color:var(--cyan);border:1px solid rgba(63,215,234,.4);border-radius:20px;padding:3px 9px}
+  .ifb .live{font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.08em;color:var(--red)}
+  .ifb .chip{display:inline-flex;align-items:center;gap:7px;margin-top:16px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;color:#e7b7ba;background:rgba(255,77,84,.1);border-radius:20px;padding:5px 11px}
+  .ifb .chip i{width:6px;height:6px;border-radius:50%;background:var(--red)}
+  .ifb .ret{margin-top:20px;font-family:'JetBrains Mono';font-size:14px;color:var(--dim)}
+  .ifb .ret b{color:var(--cyan);font-weight:500;transition:color .3s}
+  .ifb.set .ret b{color:var(--cyan)}
+  .ifb .ret.flash{animation:flash .6s ease}
+  @keyframes flash{0%{background:rgba(63,215,234,.18)}100%{background:transparent}}
+  /* menu sorgente */
+  .menu{background:#0c1014;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 30px 70px -40px #000}
+  .menu .mh{font-family:'Space Grotesk';font-weight:600;font-size:15px;color:var(--ink);padding:15px 18px;border-bottom:1px solid var(--line)}
+  .row{display:flex;align-items:center;gap:11px;padding:13px 18px;font-family:'Inter';font-weight:500;font-size:15px;color:var(--ink);border-bottom:1px solid rgba(255,255,255,.03);position:relative}
+  .row .ck{width:16px;opacity:0;color:var(--cyan);font-weight:700;transition:opacity .25s}
+  .row .ar{margin-left:auto;color:var(--dim)}
+  .row.sel{background:rgba(63,215,234,.1);color:var(--cyan)}
+  .row.sel .ck{opacity:1}
+  .row.dim{color:var(--dim)}
+  #cursor{position:absolute;left:0;top:0;z-index:30;transition:transform .55s cubic-bezier(.5,.05,.2,1);pointer-events:none}
+  #cursor .ring{position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;border:2px solid var(--cyan);background:rgba(63,215,234,.16);box-shadow:0 0 14px rgba(63,215,234,.45)}
+  #cursor.tap .ring{animation:tap .32s ease}
+  @keyframes tap{0%{transform:scale(1)}45%{transform:scale(.6)}100%{transform:scale(1)}}
+  #hint{position:absolute;left:32px;bottom:22px;font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#04222a;background:var(--cyan);padding:7px 13px;border-radius:8px;box-shadow:0 6px 20px rgba(63,215,234,.3);opacity:0;transition:opacity .3s,transform .3s;transform:translateY(6px)}
+  #hint.show{opacity:1;transform:translateY(0)}
+  #hint b{font-weight:700}
+</style></head>
+<body>
+  <div class="n1" id="n1">
+    <div class="kick"><div class="e">N-1 differenziati</div><div class="s">Un ritorno dedicato per ogni talent, dai canali di qualunque scheda audio collegata.</div></div>
+    <div class="ifb" id="ifb">
+      <div class="r1"><div class="nm"><span class="d"></span>IFB Conduttrice <span class="pgm">PGM</span></div><div class="live">● IN LINEA</div></div>
+      <div class="chip"><i></i> CONDUTTRICE</div>
+      <div class="ret" id="ret">Ritorno: <b id="retv">—</b></div>
+    </div>
+    <div class="menu" id="menu">
+      <div class="mh">Sorgente PGM</div>
+      <div id="rows"></div>
+    </div>
+    <div id="cursor"><span class="ring"></span></div>
+    <div id="hint"></div>
+  </div>
+<script>
+  const R=[['Nessuna',0],['Dante Virtual Soundcard · 16 canali',1],['Dante Virtual Soundcard (mix)',0],
+    ['Dante · can. 1',0],['Dante · can. 2',0],['Dante · can. 3',0],['Dante · can. 4',0],['Dante · can. 5',0],['Dante · can. 6',0],['…','dim']];
+  const rows=document.getElementById('rows');
+  R.forEach((r)=>{const d=document.createElement('div');d.className='row'+(r[1]==='dim'?' dim':'');d.dataset.label=r[0];
+    d.innerHTML=`<span class="ck">✓</span><span class="tx">${r[0]}</span>${r[1]===1?'<span class="ar">›</span>':''}`;rows.appendChild(d);});
+  const rowEls=[...rows.children];
+  const n1=document.getElementById('n1'),cursor=document.getElementById('cursor'),hint=document.getElementById('hint');
+  const ifb=document.getElementById('ifb'),retv=document.getElementById('retv'),ret=document.getElementById('ret');
+  const target=rowEls.find(r=>r.dataset.label==='Dante · can. 5');
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  function moveTo(el,fx,fy){const r=el.getBoundingClientRect(),m=n1.getBoundingClientRect();
+    cursor.style.transform=`translate(${r.left-m.left+r.width*(fx??.5)}px,${r.top-m.top+r.height*(fy??.5)}px)`;return sleep(560);}
+  function tap(){cursor.classList.add('tap');setTimeout(()=>cursor.classList.remove('tap'),340);}
+  function say(h){hint.innerHTML=h;hint.classList.add('show');}
+  function mute(){hint.classList.remove('show');}
+  async function demo(){
+    while(true){
+      rowEls.forEach(r=>r.classList.remove('sel')); retv.textContent='—'; ifb.classList.remove('set'); mute(); await sleep(850);
+      say('Assegna il ritorno <b>N-1</b>');
+      await moveTo(document.querySelector('.mh'),.2,.5); await sleep(300);
+      await moveTo(target,.14,.5); await sleep(250);
+      tap(); await sleep(180);
+      rowEls.forEach(r=>r.classList.remove('sel')); target.classList.add('sel');
+      await sleep(500);
+      retv.textContent='Dante · can. 5'; ifb.classList.add('set'); ret.classList.add('flash');
+      setTimeout(()=>ret.classList.remove('flash'),600);
+      await sleep(2400);
+      mute(); await sleep(900);
+    }
+  }
+  demo();
+</script>
+
+<style>html,body{margin:0!important;padding:0!important;background:transparent!important;overflow:hidden!important;display:block!important}</style>
+<script>(function(){var root=document.body.firstElementChild;function fit(){root.style.transformOrigin='top left';var dw=root.offsetWidth||1;var s=innerWidth/dw;root.style.transform='scale('+s+')';var h=Math.ceil(root.offsetHeight*s);document.body.style.height=h+'px';try{parent.postMessage({mxHeight:h},'*')}catch(e){}}addEventListener('resize',fit);addEventListener('load',fit);setTimeout(fit,60);setTimeout(fit,400);setInterval(fit,1500)})();</script>
+</body></html>

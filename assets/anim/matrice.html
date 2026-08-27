@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:'Inter';src:url('../fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:'JetBrains Mono';src:url('../fonts/JetBrainsMono-500.woff2') format('woff2');font-weight:500;font-display:block}
+  :root{--void:#08090b;--panel2:#0b0e12;--line:rgba(255,255,255,.07);--cyan:#3fd7ea;--green:#4ade80;--red:#ff4d54;--ink:#e9eef2;--dim:#6b7683}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#050607;padding:26px;font-family:'Inter'}
+  .matrix{width:1180px;background:linear-gradient(180deg,#0a0c0f,#08090b);border:1px solid var(--line);border-radius:18px;padding:24px 26px 26px;position:relative;overflow:hidden}
+  .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .head .t{font-family:'Space Grotesk';font-weight:700;font-size:17px;letter-spacing:.06em;color:var(--ink)}
+  .head .t span{font-family:'JetBrains Mono';font-weight:500;font-size:12.5px;color:var(--dim);margin-left:10px}
+  .head .r{display:flex;align-items:center;gap:16px;font-family:'JetBrains Mono';font-size:12px;letter-spacing:.05em}
+  .head .inv{color:var(--cyan);display:flex;align-items:center;gap:6px}
+  .head .st{display:flex;align-items:center;gap:7px;color:var(--green);border:1px solid rgba(74,222,128,.3);padding:5px 11px;border-radius:20px;background:rgba(74,222,128,.06)}
+  .head .st i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .lab{font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
+  .ports{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .card{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:15px 15px 16px;transition:border-color .4s,box-shadow .4s}
+  .card.on{border-color:rgba(255,77,84,.5);box-shadow:0 0 0 1px rgba(255,77,84,.25),0 10px 30px rgba(255,77,84,.10)}
+  .card.listening{border-color:rgba(63,215,234,.45);box-shadow:0 0 0 1px rgba(63,215,234,.22)}
+  .crow{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+  .name{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk';font-weight:600;font-size:15px;color:var(--ink)}
+  .name .d{width:8px;height:8px;border-radius:50%;flex:none}
+  .nm{white-space:nowrap}
+  .nm.editing{background:rgba(63,215,234,.12);outline:1px solid rgba(63,215,234,.6);border-radius:4px;padding:1px 5px;margin:-1px -5px}
+  .nm.editing::after{content:'';display:inline-block;width:1.5px;height:14px;background:var(--cyan);margin-left:2px;vertical-align:-2px;animation:caret .8s steps(1) infinite}
+  @keyframes caret{0%,100%{opacity:1}50%{opacity:0}}
+  .type{font-family:'JetBrains Mono';font-weight:500;font-size:9.5px;letter-spacing:.12em;color:var(--dim)}
+  .talk{height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:14px;letter-spacing:.14em;background:rgba(255,255,255,.015);border:1px solid var(--line);color:var(--dim);transition:all .26s}
+  .card.on .talk{background:linear-gradient(180deg,#ff5b62,#f0353d);color:#fff;border-color:transparent;box-shadow:0 0 26px rgba(255,77,84,.5)}
+  .brow{display:flex;align-items:center;gap:11px;margin-top:12px}
+  .listen{font-family:'JetBrains Mono';font-weight:500;font-size:10.5px;letter-spacing:.1em;color:var(--cyan);border:1px solid rgba(63,215,234,.35);border-radius:7px;padding:6px 10px;flex:none;transition:all .26s}
+  .card.listening .listen{background:var(--cyan);color:#04222a;border-color:var(--cyan);box-shadow:0 0 16px rgba(63,215,234,.45)}
+  /* fader del volume: barra ferma, si sposta solo quando la regoli */
+  .meter{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;position:relative}
+  .meter .fill{position:absolute;inset:0;transform-origin:left;transform:scaleX(.5);background:linear-gradient(90deg,var(--cyan),#7fe9f5);border-radius:4px;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+  .card.on .meter .fill{background:linear-gradient(90deg,#ff8a8f,#ff4d54)}
+  .card.tweaking .meter{box-shadow:0 0 0 1px rgba(63,215,234,.4)}
+  /* cursore + etichetta azione */
+  #cursor{position:absolute;left:0;top:0;width:0;height:0;z-index:30;transition:transform .58s cubic-bezier(.5,.05,.2,1);pointer-events:none}
+  #cursor .ring{position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;border:2px solid var(--cyan);background:rgba(63,215,234,.16);box-shadow:0 0 14px rgba(63,215,234,.45)}
+  #cursor.tap .ring{animation:tap .32s ease}
+  #cursor.grab .ring{background:rgba(63,215,234,.34);transform:scale(.8)}
+  @keyframes tap{0%{transform:scale(1)}45%{transform:scale(.62)}100%{transform:scale(1)}}
+  #hint{position:absolute;left:14px;bottom:20px;transform:translateY(6px);font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;color:#04222a;background:var(--cyan);padding:7px 13px;border-radius:8px;box-shadow:0 6px 20px rgba(63,215,234,.3);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none}
+  #hint.show{opacity:1;transform:translateY(0)}
+  #hint b{font-weight:700}
+</style></head>
+<body>
+  <div class="matrix" id="matrix">
+    <div class="head">
+      <div class="t">MATRICE <span>vortex-matrix</span></div>
+      <div class="r"><div class="inv">▦ Invita</div><div class="st"><i></i> IN LINEA</div></div>
+    </div>
+    <div class="lab">Porte</div>
+    <div class="ports" id="ports"></div>
+    <div id="cursor"><span class="ring"></span></div>
+    <div id="hint"></div>
+  </div>
+<script>
+  const P=[
+    ['PROD','PANEL','#5fd0c4'],['REGIA 2','PANEL','#5fb8d0'],['AUDIO','PANEL','#4ade80'],['GRAFICA','4WIRE','#b98cff'],
+    ['LUCI','PANEL','#e9c24a'],['CAM 1','BELTPACK','#6f8cff'],['CAM 2','BELTPACK','#6f8cff'],['CAM 3','BELTPACK','#6f8cff'],
+    ['CAM 4','BELTPACK','#6f8cff'],['COND.','IFB','#ff4d54'],['INVIATO','IFB','#c76a6a'],['TELEFONO','PHONE','#8b94a0']
+  ];
+  const BASE=[.55,.48,.62,.5,.44,.66,.5,.58,.46,.7,.52,.6];
+  const wrap=document.getElementById('ports');
+  P.forEach((p)=>{const c=document.createElement('div');c.className='card';c.dataset.name=p[0];
+    c.innerHTML=`<div class="crow"><div class="name"><span class="d" style="background:${p[2]};box-shadow:0 0 8px ${p[2]}aa"></span><span class="nm">${p[0]}</span></div><div class="type">${p[1]}</div></div>
+      <div class="talk">TALK</div>
+      <div class="brow"><div class="listen">LISTEN</div><div class="meter"><div class="fill"></div></div></div>`;
+    wrap.appendChild(c);});
+  const cards=[...document.querySelectorAll('.card')];
+  const matrix=document.getElementById('matrix'),cursor=document.getElementById('cursor'),hint=document.getElementById('hint');
+  const card=n=>cards.find(c=>c.dataset.name===n);
+  const q=(n,sel)=>card(n).querySelector(sel);
+  function setBase(){cards.forEach((c,i)=>{const f=c.querySelector('.fill');f.dataset.lv=BASE[i];f.style.transform='scaleX('+BASE[i]+')';});}
+  setBase();
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  function xy(el,fx,fy){const r=el.getBoundingClientRect(),m=matrix.getBoundingClientRect();return {x:r.left-m.left+r.width*(fx??.5),y:r.top-m.top+r.height*(fy??.5)};}
+  function place(x,y){cursor.style.transform=`translate(${x}px,${y}px)`;}
+  function moveTo(el){const c=xy(el);place(c.x,c.y);return sleep(640);}
+  function tap(){cursor.classList.add('tap');setTimeout(()=>cursor.classList.remove('tap'),340);}
+  function say(html){hint.innerHTML=html;hint.classList.add('show');}
+  function mute(){hint.classList.remove('show');}
+  async function typeInto(nmEl,text){nmEl.classList.add('editing');nmEl.textContent='';for(const ch of text){nmEl.textContent+=ch;await sleep(62);}await sleep(500);nmEl.classList.remove('editing');}
+  // trascina il fader del volume UNA volta, dal livello attuale a 'to'
+  async function dragVolume(name,to){
+    const c=card(name),meter=c.querySelector('.meter'),fill=c.querySelector('.fill');
+    const from=parseFloat(fill.dataset.lv);
+    let p=xy(meter,from,.5); place(p.x,p.y); await sleep(560);
+    cursor.classList.add('grab'); await sleep(150);
+    c.classList.add('tweaking');
+    fill.style.transform='scaleX('+to+')'; fill.dataset.lv=to;
+    p=xy(meter,to,.5); place(p.x,p.y); await sleep(650);
+    cursor.classList.remove('grab'); c.classList.remove('tweaking'); await sleep(200);
+  }
+  async function demo(){
+    while(true){
+      cards.forEach(c=>c.classList.remove('on','listening')); q('CAM 2','.nm').textContent='CAM 2'; setBase(); mute(); await sleep(750);
+      // 1 — attiva TALK
+      say('Premi <b>TALK</b>'); await moveTo(q('PROD','.talk')); tap(); await sleep(160); card('PROD').classList.add('on'); await sleep(1200);
+      // 2 — regola il volume del TALK (una volta)
+      say('Regola il volume del <b>TALK</b>'); await dragVolume('PROD',0.86); await sleep(1200);
+      // 3 — attiva LISTEN
+      say('Attiva <b>LISTEN</b>'); await moveTo(q('CAM 1','.listen')); tap(); await sleep(160); card('CAM 1').classList.add('listening'); await sleep(1200);
+      // 4 — regola il volume del LISTEN (una volta)
+      say('Regola il volume del <b>LISTEN</b>'); await dragVolume('CAM 1',0.33); await sleep(1300);
+      // 5 — rinomina etichetta
+      say('Rinomina l\'<b>etichetta</b>'); await moveTo(q('CAM 2','.nm')); tap(); await sleep(240); await typeInto(q('CAM 2','.nm'),'Camera 2 · Regia'); await sleep(1500);
+      mute(); await sleep(1100);
+    }
+  }
+  demo();
+</script>
+
+<style>html,body{margin:0!important;padding:0!important;background:transparent!important;overflow:hidden!important;display:block!important}</style>
+<script>(function(){var root=document.body.firstElementChild;function fit(){root.style.transformOrigin='top left';var dw=root.offsetWidth||1;var s=innerWidth/dw;root.style.transform='scale('+s+')';var h=Math.ceil(root.offsetHeight*s);document.body.style.height=h+'px';try{parent.postMessage({mxHeight:h},'*')}catch(e){}}addEventListener('resize',fit);addEventListener('load',fit);setTimeout(fit,60);setTimeout(fit,400);setInterval(fit,1500)})();</script>
+</body></html>

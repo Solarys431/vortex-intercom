@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:'Inter';src:url('../fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:'JetBrains Mono';src:url('../fonts/JetBrainsMono-500.woff2') format('woff2');font-weight:500;font-display:block}
+  :root{--void:#08090b;--panel:#0e1216;--line:rgba(255,255,255,.09);--cyan:#3fd7ea;--blue:#2f7dff;--ink:#e9eef2;--dim:#7a848f}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#050607;padding:30px;font-family:'Inter'}
+  .inv{position:relative;width:720px;background:linear-gradient(180deg,#0c1014,#090b0e);border:1px solid var(--line);border-radius:18px;padding:28px 30px 30px;overflow:hidden}
+  .inv h3{font-family:'Space Grotesk';font-weight:700;font-size:22px;color:var(--ink);margin-bottom:22px}
+  .field{margin-bottom:16px}
+  .field .l{font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:8px}
+  .field .box{font-family:'JetBrains Mono';font-size:15px;color:var(--ink);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+  .out{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;margin-top:22px;opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s;pointer-events:none}
+  .out.show{opacity:1;transform:none}
+  .qr{width:170px;height:170px;border-radius:12px;background:#fff;padding:10px}
+  .qr canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+  .otx .p{font-family:'Inter';font-weight:500;font-size:15px;color:#cfd6dd;line-height:1.5}
+  .otx .exp{font-family:'JetBrains Mono';font-size:13px;color:var(--dim);margin-top:12px}
+  .otx .lk{font-family:'JetBrains Mono';font-size:12px;color:#59636e;margin-top:14px;word-break:break-all;line-height:1.5}
+  .row{display:flex;align-items:center;justify-content:space-between;margin-top:26px}
+  .close{font-family:'Inter';font-weight:500;font-size:15px;color:var(--dim)}
+  .gen{font-family:'Space Grotesk';font-weight:700;font-size:15px;color:#fff;background:var(--blue);border-radius:10px;padding:12px 22px;transition:filter .2s,box-shadow .2s}
+  .gen.hot{box-shadow:0 0 24px rgba(47,125,255,.5)}
+  #cursor{position:absolute;left:0;top:0;z-index:30;transition:transform .55s cubic-bezier(.5,.05,.2,1);pointer-events:none}
+  #cursor .ring{position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;border:2px solid var(--cyan);background:rgba(63,215,234,.16);box-shadow:0 0 14px rgba(63,215,234,.45)}
+  #cursor.tap .ring{animation:tap .32s ease}
+  @keyframes tap{0%{transform:scale(1)}45%{transform:scale(.6)}100%{transform:scale(1)}}
+  #hint{position:absolute;left:30px;bottom:22px;font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#04222a;background:var(--cyan);padding:7px 13px;border-radius:8px;box-shadow:0 6px 20px rgba(63,215,234,.3);opacity:0;transition:opacity .3s,transform .3s;transform:translateY(6px)}
+  #hint.show{opacity:1;transform:translateY(0)}
+  #hint b{font-weight:700}
+</style></head>
+<body>
+  <div class="inv" id="inv">
+    <h3>Invita una postazione</h3>
+    <div class="field"><div class="l">Porta</div><div class="box">PROD</div></div>
+    <div class="field"><div class="l">Valido per</div><div class="box">12 ore</div></div>
+    <div class="field"><div class="l">Pagina degli inviti</div><div class="box">https://intercom.vortexcomms.com/intercom</div></div>
+    <div class="out" id="out">
+      <div class="qr"><canvas id="qr" width="150" height="150"></canvas></div>
+      <div class="otx">
+        <div class="p">Inquadra col telefono, o incolla il link in un messaggio.</div>
+        <div class="exp">Scade: 15 Ago 2026 · 10:20</div>
+        <div class="lk">https://intercom.vortexcomms.com/intercom#lk=wss://rtc.vortexcomms.com&t…IDIifQ.xY7&port=prod</div>
+      </div>
+    </div>
+    <div class="row"><div class="close">Chiudi</div><div class="gen" id="gen">Genera invito</div></div>
+    <div id="cursor"><span class="ring"></span></div>
+    <div id="hint"></div>
+  </div>
+<script>
+  // QR finto ma credibile: moduli deterministici + 3 finder pattern
+  (function(){const cv=document.getElementById('qr'),ctx=cv.getContext('2d'),N=25,s=cv.width/N;
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);ctx.fillStyle='#0a0a0a';
+    let seed=987654321;const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){if(rnd()>0.52)ctx.fillRect(x*s,y*s,s,s);}
+    function fnd(fx,fy){ctx.fillStyle='#fff';ctx.fillRect(fx*s,fy*s,7*s,7*s);ctx.fillStyle='#0a0a0a';ctx.fillRect(fx*s,fy*s,7*s,7*s);ctx.fillStyle='#fff';ctx.fillRect((fx+1)*s,(fy+1)*s,5*s,5*s);ctx.fillStyle='#0a0a0a';ctx.fillRect((fx+2)*s,(fy+2)*s,3*s,3*s);}
+    fnd(0,0);fnd(N-7,0);fnd(0,N-7);})();
+  const inv=document.getElementById('inv'),cursor=document.getElementById('cursor'),hint=document.getElementById('hint'),gen=document.getElementById('gen'),out=document.getElementById('out');
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  function moveTo(el){const r=el.getBoundingClientRect(),m=inv.getBoundingClientRect();cursor.style.transform=`translate(${r.left-m.left+r.width/2}px,${r.top-m.top+r.height/2}px)`;return sleep(560);}
+  function tap(){cursor.classList.add('tap');setTimeout(()=>cursor.classList.remove('tap'),340);}
+  function say(h){hint.innerHTML=h;hint.classList.add('show');}function mute(){hint.classList.remove('show');}
+  async function demo(){
+    while(true){
+      out.classList.remove('show'); gen.classList.remove('hot'); mute(); await sleep(900);
+      say('Genera un <b>invito</b>'); await moveTo(gen); await sleep(200);
+      tap(); gen.classList.add('hot'); await sleep(360); gen.classList.remove('hot');
+      out.classList.add('show'); await sleep(3200);
+      mute(); await sleep(900);
+    }
+  }
+  demo();
+</script>
+
+<style>html,body{margin:0!important;padding:0!important;background:transparent!important;overflow:hidden!important;display:block!important}</style>
+<script>(function(){var root=document.body.firstElementChild;function fit(){root.style.transformOrigin='top left';var dw=root.offsetWidth||1;var s=innerWidth/dw;root.style.transform='scale('+s+')';var h=Math.ceil(root.offsetHeight*s);document.body.style.height=h+'px';try{parent.postMessage({mxHeight:h},'*')}catch(e){}}addEventListener('resize',fit);addEventListener('load',fit);setTimeout(fit,60);setTimeout(fit,400);setInterval(fit,1500)})();</script>
+</body></html>

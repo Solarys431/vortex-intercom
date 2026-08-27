@@ -1,0 +1,49 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- VORTEX Intercom — icona app macOS.
+       Linguaggio del marchio: grafite scuro + LED ciano.
+       Simbolo: il LED "on air" con onde di trasmissione ((( • ))). -->
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d2126"/>
+      <stop offset="0.55" stop-color="#121519"/>
+      <stop offset="1" stop-color="#0b0d10"/>
+    </linearGradient>
+    <radialGradient id="alone" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#3fd7ea" stop-opacity="0.28"/>
+      <stop offset="0.6" stop-color="#3fd7ea" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#3fd7ea" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="led" cx="0.38" cy="0.34" r="0.85">
+      <stop offset="0" stop-color="#c8f4fb"/>
+      <stop offset="0.35" stop-color="#6fe2f1"/>
+      <stop offset="1" stop-color="#17b9d3"/>
+    </radialGradient>
+    <filter id="sfocatura" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+  </defs>
+
+  <!-- Corpo: squircle scuro con bordo hairline -->
+  <rect x="32" y="32" width="960" height="960" rx="216" fill="url(#fondo)"/>
+  <rect x="34.5" y="34.5" width="955" height="955" rx="213.5" fill="none"
+        stroke="#ffffff" stroke-opacity="0.09" stroke-width="5"/>
+
+  <!-- Alone del LED -->
+  <circle cx="512" cy="548" r="330" fill="url(#alone)"/>
+
+  <!-- Onde di trasmissione: due per lato, spesse, punte arrotondate.
+       Archi centrati sul LED (512,548). -->
+  <g fill="none" stroke="#3fd7ea" stroke-linecap="round">
+    <!-- interne -->
+    <path d="M 366 402 A 206 206 0 0 0 366 694" stroke-width="46" opacity="0.85"/>
+    <path d="M 658 402 A 206 206 0 0 1 658 694" stroke-width="46" opacity="0.85"/>
+    <!-- esterne, più tenui -->
+    <path d="M 264 300 A 350 350 0 0 0 264 796" stroke-width="46" opacity="0.38"/>
+    <path d="M 760 300 A 350 350 0 0 1 760 796" stroke-width="46" opacity="0.38"/>
+  </g>
+
+  <!-- LED: bagliore + corpo -->
+  <circle cx="512" cy="548" r="96" fill="#3fd7ea" opacity="0.55" filter="url(#sfocatura)"/>
+  <circle cx="512" cy="548" r="86" fill="url(#led)"/>
+  <circle cx="512" cy="548" r="86" fill="none" stroke="#eafcff" stroke-opacity="0.35" stroke-width="3"/>
+</svg>

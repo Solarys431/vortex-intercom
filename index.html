@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; frame-src 'self'; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests" />
+<title>VORTEX Intercom — la matrice di regia su iPhone, iPad e Mac</title>
+<meta name="description" content="Intercom software in beta test esterno con TALK, LISTEN, partyline, IFB e supporto fino a 16 N-1 su interfacce compatibili, per iPhone, iPad e Mac." />
+<meta name="theme-color" content="#08090b" />
+<meta property="og:title" content="VORTEX Intercom — la matrice di regia, virtualizzata" />
+<meta property="og:description" content="Beta test esterno: TALK, LISTEN, partyline, IFB e supporto fino a 16 N-1 su interfacce compatibili." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="assets/console.png" />
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<style>
+  /* Font OSPITATI SUL SITO (no Google CDN): niente terze parti, niente
+     trasferimento dell'IP del visitatore — pagina GDPR-safe by design. */
+  @font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/Inter-400.woff2) format('woff2');}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/Inter-500.woff2) format('woff2');}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/Inter-600.woff2) format('woff2');}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/JetBrainsMono-500.woff2) format('woff2');}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/JetBrainsMono-700.woff2) format('woff2');}
+  @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/SpaceGrotesk-500.woff2) format('woff2');}
+  @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/SpaceGrotesk-600.woff2) format('woff2');}
+  @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/SpaceGrotesk-700.woff2) format('woff2');}
+  :root {
+    --void: #08090b;
+    --void-2: #0b0d10;
+    --panel: #101318;
+    --panel-2: #151a20;
+    --line: rgba(255,255,255,0.07);
+    --line-2: rgba(255,255,255,0.12);
+    --ink: #eef2f5;
+    --dim: #8b939c;
+    --dim-2: #5b636b;
+    --cyan: #3fd7ea;
+    --green: #30d158;
+    --red: #ff453a;
+    --amber: #ffd60a;
+    --violet: #b06ad9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  body {
+    background: var(--void);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+  .skip-link { position: fixed; top: 8px; left: 8px; z-index: 1000; padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--void); font-weight: 700; transform: translateY(-150%); }
+  .skip-link:focus { transform: none; }
+
+  /* ---- Firma tipografica ---- */
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 12px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--cyan);
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: -0.02em; line-height: 1.04; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---- Nav ---- */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(8,9,11,0.72); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-in { display: flex; align-items: center; gap: 18px; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk'; font-weight: 700; font-size: 16px; letter-spacing: 0.02em; }
+  .brand .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
+  .brand .brand-logo { width: 28px; height: 28px; display: block; filter: drop-shadow(0 0 10px rgba(63,215,234,0.28)); }
+  .brand b { color: var(--cyan); font-weight: 700; }
+  .eco-back { font-family: 'JetBrains Mono'; font-size: 12px; letter-spacing: 0.06em; color: var(--dim); white-space: nowrap; }
+  .eco-back:hover { color: var(--ink); }
+  .nav-links { display: flex; gap: 26px; margin-left: auto; font-family: 'JetBrains Mono'; font-size: 12px; letter-spacing: 0.08em; color: var(--dim); }
+  .nav-links a:hover { color: var(--ink); }
+  .repo-link { font-family: 'JetBrains Mono'; font-size: 11px; font-weight: 700; color: var(--dim); border: 1px solid var(--line-2); border-radius: 7px; padding: 6px 9px; }
+  .repo-link:hover { color: var(--ink); border-color: rgba(63,215,234,.4); }
+  .langsw { display: inline-flex; flex: none; border: 1px solid var(--line-2); border-radius: 7px; overflow: hidden; font-family: 'JetBrains Mono'; font-size: 11px; font-weight: 700; }
+  .langsw button { border: 0; background: transparent; color: var(--dim); padding: 6px 9px; cursor: pointer; }
+  .langsw button.on { background: var(--cyan); color: #041f24; }
+  @media (max-width: 680px){ .nav-links, .eco-back { display: none; } .nav-in { gap: 12px; } .repo-link { margin-left: auto; } }
+  @media (max-width: 400px){ .brand { min-width:0;overflow:hidden;font-size:15px; } .brand b { display:none; } .nav-in { gap:7px; } .repo-link { font-size:10px;padding:6px; } .langsw button{padding:6px 7px}.stats{grid-template-columns:1fr}.stat{min-width:0} }
+
+  /* ---- Hero ---- */
+  .hero { position: relative; padding: 96px 0 70px; overflow: hidden; }
+  #xpoint { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.5; }
+  .hero-in { position: relative; z-index: 1; }
+  .hero-top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .beta {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--green); border: 1px solid rgba(48,209,88,0.4); border-radius: 6px; padding: 5px 10px;
+    background: rgba(48,209,88,0.06);
+  }
+  .hero h1 { font-size: clamp(40px, 8vw, 82px); margin: 20px 0 22px; }
+  .hero h1 .glow { color: var(--cyan); }
+  .hero .lede { font-size: clamp(17px, 2.4vw, 22px); color: var(--dim); max-width: 660px; }
+  .hero .lede b { color: var(--ink); font-weight: 600; }
+  .spec-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+  .badge {
+    font-family: 'JetBrains Mono'; font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--dim); border: 1px solid var(--line-2); border-radius: 6px; padding: 7px 12px;
+    background: rgba(255,255,255,0.02);
+  }
+  .badge.on { color: var(--cyan); border-color: rgba(63,215,234,0.4); }
+
+  .hero-shot { margin-top: 54px; position: relative; }
+  .hero-shot::before {
+    content: ''; position: absolute; inset: -1px; border-radius: 16px;
+    background: linear-gradient(160deg, rgba(63,215,234,0.5), rgba(48,209,88,0.12) 40%, transparent 70%);
+    z-index: 0; filter: blur(0.5px);
+  }
+  .frame {
+    position: relative; z-index: 1; border-radius: 15px; overflow: hidden;
+    border: 1px solid var(--line-2); background: var(--panel);
+    box-shadow: 0 40px 120px -40px rgba(0,0,0,0.9), 0 0 60px -30px rgba(63,215,234,0.3);
+  }
+  .frame img { width: 100%; }
+
+  /* ---- Sezioni ---- */
+  section { position: relative; }
+  .band { padding: 84px 0; border-top: 1px solid var(--line); }
+  .kicker { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .kicker::after { content: ''; height: 1px; flex: 1; background: linear-gradient(90deg, var(--line-2), transparent); }
+  .band h2 { font-size: clamp(28px, 4.5vw, 46px); max-width: 720px; }
+  .band .sub { color: var(--dim); font-size: 18px; max-width: 620px; margin-top: 16px; }
+
+  /* problema→soluzione */
+  .contrast { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px; }
+  @media (max-width: 720px){ .contrast { grid-template-columns: 1fr; } }
+  .card {
+    border: 1px solid var(--line); border-radius: 14px; padding: 26px; background: var(--panel);
+  }
+  .card.old { opacity: 0.72; }
+  .card h3 { font-size: 20px; margin-bottom: 10px; }
+  .card.old h3 { color: var(--dim); }
+  .card.new { border-color: rgba(63,215,234,0.3); box-shadow: 0 0 40px -20px rgba(63,215,234,0.4); }
+  .card.new h3 { color: var(--cyan); }
+  .card ul { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 9px; }
+  .card li { font-size: 15px; color: var(--dim); padding-left: 22px; position: relative; }
+  .card li::before { content: '·'; position: absolute; left: 6px; color: var(--dim-2); font-weight: 700; }
+  .card.new li::before { content: '→'; color: var(--cyan); font-size: 12px; top: 2px; }
+
+  /* feature alternate */
+  .feat { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; margin-top: 56px; }
+  .feat:first-of-type { margin-top: 44px; }
+  .feat.flip .feat-text { order: 2; }
+  @media (max-width: 860px){ .feat, .feat.flip { grid-template-columns: 1fr; gap: 28px; } .feat.flip .feat-text { order: 0; } }
+  .feat-text h3 { font-size: clamp(24px, 3.4vw, 34px); margin: 14px 0 14px; }
+  .feat-text p { color: var(--dim); font-size: 16.5px; }
+  .feat-text .note { margin-top: 16px; font-family: 'JetBrains Mono'; font-size: 12.5px; color: var(--green); letter-spacing: 0.03em; }
+  .feat-shot { position: relative; }
+  .feat-shot .frame { box-shadow: 0 30px 80px -40px rgba(0,0,0,0.85); }
+
+  /* mobile duo (beltpack + invito) */
+  .duo { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 20px; align-items: center; }
+  @media (max-width: 560px){ .duo { grid-template-columns: 1fr; } }
+  .phone {
+    border: 1px solid var(--line-2); border-radius: 26px; overflow: hidden; background: #000;
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.9), 0 0 50px -30px rgba(63,215,234,0.25); padding: 6px;
+  }
+  .phone img { border-radius: 21px; }
+
+  /* piattaforme */
+  .plats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; }
+  @media (max-width: 680px){ .plats { grid-template-columns: 1fr; } }
+  .plat { border: 1px solid var(--line); border-radius: 14px; padding: 26px; background: var(--panel); }
+  .plat .p-ico { font-family: 'JetBrains Mono'; font-size: 12px; letter-spacing: 0.1em; color: var(--cyan); }
+  .plat h3 { font-size: 21px; margin: 12px 0 8px; }
+  .plat p { color: var(--dim); font-size: 15px; }
+
+  /* stat strip */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-top: 44px; }
+  @media (max-width: 680px){ .stats { grid-template-columns: 1fr 1fr; } }
+  .stat { background: var(--panel); padding: 26px 22px; }
+  .stat .n { font-family: 'Space Grotesk'; font-weight: 700; font-size: 34px; color: var(--ink); letter-spacing: -0.02em; }
+  .stat .n span { color: var(--cyan); }
+  .stat .l { font-family: 'JetBrains Mono'; font-size: 11px; letter-spacing: 0.08em; color: var(--dim); margin-top: 6px; text-transform: uppercase; }
+
+  /* chiusura */
+  .close { text-align: center; padding: 100px 0; border-top: 1px solid var(--line); }
+  .close h2 { font-size: clamp(30px, 5vw, 52px); }
+  .close p { color: var(--dim); margin-top: 16px; font-size: 18px; }
+  .close .avail { margin-top: 28px; font-family: 'JetBrains Mono'; font-size: 13px; letter-spacing: 0.08em; color: var(--cyan); }
+
+  footer { border-top: 1px solid var(--line); padding: 34px 0; }
+  .foot-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-family: 'JetBrains Mono'; font-size: 12px; color: var(--dim-2); }
+  .foot-priv { color: var(--dim); text-align: center; flex: 1 1 auto; }
+  @media (max-width: 680px){ .foot-priv { order: 3; flex-basis: 100%; text-align: left; } }
+
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  /* schede immagine: "vanno in linea" quando entrano (tally broadcast) */
+  .feat-shot.reveal.in .frame { animation: goLive 1.7s cubic-bezier(.2,.7,.2,1) 1; }
+  .phone.reveal.in img { animation: goLivePhone 1.7s cubic-bezier(.2,.7,.2,1) 1; }
+  @keyframes goLive {
+    0%   { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+    34%  { box-shadow: 0 0 0 1px var(--cyan), 0 0 30px -4px var(--cyan); }
+    100% { box-shadow: 0 30px 80px -40px rgba(0,0,0,0.85); }
+  }
+  @keyframes goLivePhone {
+    0%,100% { box-shadow: 0 20px 50px -20px rgba(0,0,0,0.6); }
+    34%     { box-shadow: 0 0 28px -2px var(--cyan); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    #xpoint { display: none; }
+  }
+  .mx-embed { width: 100%; border: 0; display: block; background: transparent; }
+  .frame:has(.mx-embed) { padding: 0; }
+  /* animazioni a piena larghezza (testo sopra, mockup grande sotto) per leggibilità */
+  .feat:has(.mx-embed) { grid-template-columns: 1fr; gap: 40px; align-items: stretch; }
+  .feat:has(.mx-embed) .feat-text { max-width: 720px; }
+  .duo:has(.mx-embed) { display: flex; gap: 30px; align-items: center; }
+  .duo:has(.mx-embed) .phone { width: 280px; flex: none; margin: 0; }
+  .duo:has(.mx-embed) .feat-shot { flex: 1; min-width: 0; }
+  @media (max-width:560px){
+    .duo:has(.mx-embed){display:grid;grid-template-columns:1fr;gap:20px}
+    .duo:has(.mx-embed) .phone{width:min(100%,280px);margin:0 auto}
+    .feat:has(.mx-embed) .feat-text{min-width:0}
+  }
+  .eco-cta { display:inline-block; font-family:'JetBrains Mono'; font-size:13px; letter-spacing:.08em; color:var(--cyan); border:1px solid rgba(63,215,234,.4); border-radius:10px; padding:12px 22px; transition:background .2s, box-shadow .2s; }
+  .eco-cta:hover { background:rgba(63,215,234,.1); box-shadow:0 0 20px rgba(63,215,234,.25); }
+  .foot-eco { display:flex; gap:22px; justify-content:center; padding:16px 0 2px; font-family:'JetBrains Mono'; font-size:12px; letter-spacing:.06em; }
+  .foot-eco a { color:var(--dim); }
+  .foot-eco a:hover { color:var(--cyan); }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main" data-i18n="skip">Salta al contenuto</a>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><img src="assets/vortex-mark.png" class="brand-logo" alt=""> VORTEX <b>INTERCOM</b></div>
+    <a href="../vortex-site/" class="eco-back" data-i18n="nav.eco">← ECOSISTEMA</a>
+    <div class="nav-links">
+      <a href="#matrice" data-i18n="nav.matrix">MATRICE</a>
+      <a href="#n1">N-1</a>
+      <a href="#link" data-i18n="nav.invite">INVITO</a>
+      <a href="#piattaforme" data-i18n="nav.platforms">PIATTAFORME</a>
+    </div>
+    <a class="repo-link" href="https://github.com/Solarys431/vortex-intercom" aria-label="GitHub repository">GitHub</a>
+    <div class="langsw" role="group" aria-label="Lingua / Language"><button type="button" data-lang="it" class="on" aria-pressed="true">IT</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
+  </div>
+</nav>
+
+<header class="hero" id="main">
+  <canvas id="xpoint"></canvas>
+  <div class="wrap hero-in">
+    <div class="hero-top reveal">
+      <span class="eyebrow" data-i18n="hero.eyebrow">Intercom broadcast · iOS · iPadOS · macOS</span>
+      <span class="beta" data-i18n="hero.beta">● BETA · IN TEST SU TESTFLIGHT</span>
+    </div>
+    <h1 class="reveal" data-i18n-html="hero.h1">La matrice di regia,<br><span class="glow">virtualizzata.</span></h1>
+    <p class="lede reveal" data-i18n-html="hero.lead">TALK, LISTEN, partyline, IFB e supporto fino a <b>16 N-1 differenziati su interfacce compatibili</b>. Un intercom software basato sul modello delle matrici broadcast, per iPhone, iPad e Mac. La regia assegna una postazione con un link o un QR firmato.</p>
+    <div class="spec-row reveal">
+      <span class="badge on">TALK / LISTEN</span>
+      <span class="badge">PARTYLINE</span>
+      <span class="badge">IFB</span>
+      <span class="badge on">16× N-1</span>
+      <span class="badge">DANTE VSC</span>
+      <span class="badge">LiveKit / WebRTC</span>
+    </div>
+    <div class="hero-shot reveal">
+      <div class="frame"><iframe src="assets/anim/matrice.html" class="mx-embed" title="Matrice VORTEX Intercom in funzione" data-i18n="hero.frame" data-i18n-attr="title" style="aspect-ratio:1180/700"></iframe></div>
+    </div>
+  </div>
+</header>
+
+<section id="matrice" class="band">
+  <div class="wrap">
+    <div class="kicker reveal"><span class="eyebrow" data-i18n="principle.eyebrow">Il principio</span></div>
+    <h2 class="reveal" data-i18n="principle.h2">Il modello della matrice broadcast, in software.</h2>
+    <p class="sub reveal" data-i18n="principle.sub">Una matrice di crosspoint definisce chi parla con chi, a che volume e chi ascolta. VORTEX porta questa logica sui dispositivi supportati, senza richiedere una matrice intercom proprietaria dedicata; il trasporto audio usa LiveKit/WebRTC.</p>
+    <div class="contrast">
+      <div class="card old reveal">
+        <div class="eyebrow" style="color:var(--dim)" data-i18n="principle.old.eyebrow">Matrice hardware</div>
+        <h3 data-i18n="principle.old.h3">Il rack tradizionale</h3>
+        <ul>
+          <li data-i18n="principle.old.f1">Matrice fisica, beltpack cablati e cavi dedicati</li>
+          <li data-i18n="principle.old.f2">Installazione, configurazione e manutenzione dedicate</li>
+          <li data-i18n="principle.old.f3">Vincolata alla sala regia</li>
+          <li data-i18n="principle.old.f4">Ogni nuova postazione richiede altro hardware</li>
+        </ul>
+      </div>
+      <div class="card new reveal">
+        <div class="eyebrow">VORTEX Intercom</div>
+        <h3 data-i18n="principle.new.h3">La matrice, in app</h3>
+        <ul>
+          <li data-i18n="principle.new.f1">iPhone, iPad e Mac diventano pannelli e beltpack</li>
+          <li data-i18n="principle.new.f2">La regia gestisce la matrice; le postazioni accedono tramite link</li>
+          <li data-i18n="principle.new.f3">Studio, esterna o postazione remota, compatibilmente con la rete</li>
+          <li data-i18n="principle.new.f4">Una postazione aggiuntiva richiede un invito, non altro hardware</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="n1" class="band">
+  <div class="wrap">
+    <div class="kicker reveal"><span class="eyebrow" data-i18n="n1.eyebrow">La funzione che conta</span></div>
+    <h2 class="reveal" data-i18n="n1.h2">Fino a 16 N-1 differenziati su interfacce multicanale compatibili.</h2>
+    <p class="sub reveal" data-i18n="n1.sub">Ogni partecipante ha bisogno del proprio ritorno: il segnale program senza la sua voce. VORTEX può assegnare ciascun N-1 a un canale distinto di un'interfaccia CoreAudio multicanale compatibile — per esempio una Dante Virtual Soundcard — fino a sedici circuiti indipendenti.</p>
+    <div class="feat">
+      <div class="feat-text reveal">
+        <div class="eyebrow">N-1 · IFB · DANTE</div>
+        <h3 data-i18n="n1.h3">Un ritorno su misura per ogni partecipante.</h3>
+        <p data-i18n="n1.p">Il menu della sorgente PGM mostra i canali dell'interfaccia uno per uno. Puoi assegnarne uno alla conduttrice, uno all'inviato e un altro alla seconda voce: ciascuno riceve il mix necessario senza il ritorno della propria voce.</p>
+        <div class="note" data-i18n="n1.note">// fino a 16 circuiti N-1 indipendenti da una sola interfaccia</div>
+      </div>
+      <div class="feat-shot reveal"><div class="frame"><iframe src="assets/anim/n1.html" class="mx-embed" title="Assegnazione di un N-1 da un canale dell'interfaccia audio" data-i18n="n1.frame" data-i18n-attr="title" style="aspect-ratio:1080/560"></iframe></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="link" class="band">
+  <div class="wrap">
+    <div class="kicker reveal"><span class="eyebrow" data-i18n="invite.eyebrow">La postazione è un link</span></div>
+    <h2 class="reveal" data-i18n="invite.h2">La regia invita. La postazione entra in pochi passaggi.</h2>
+    <p class="sub reveal" data-i18n="invite.sub">Niente account né installazioni per gli ospiti. La regia genera un invito per una postazione — un QR o un link con scadenza — e chi lo riceve apre l'intercom sul telefono. Il beltpack offre push-to-talk, volume in cuffia e controllo dell'ascolto.</p>
+    <div class="feat">
+      <div class="duo reveal">
+        <div class="phone reveal"><iframe src="assets/anim/beltpack.html" class="mx-embed" title="Beltpack su iPhone: push-to-talk e volume in cuffia" data-i18n="invite.beltpackFrame" data-i18n-attr="title" style="aspect-ratio:358/760"></iframe></div>
+        <div class="feat-shot reveal"><div class="frame"><iframe src="assets/anim/invito.html" class="mx-embed" title="Generazione dell'invito tramite QR e link con scadenza" data-i18n="invite.qrFrame" data-i18n-attr="title" style="aspect-ratio:720/640"></iframe></div></div>
+      </div>
+      <div class="feat-text flip reveal" style="order:2">
+        <div class="eyebrow">INVITO · QR · BELTPACK</div>
+        <h3 data-i18n="invite.h3">Un beltpack che sta in tasca.</h3>
+        <p data-i18n="invite.p">Ogni invito è firmato, assegna un ruolo specifico e può avere una scadenza. Sul telefono, l'ospite trova push-to-talk, modalità momentanea o a linea aperta, volume in cuffia e controllo dell'ascolto.</p>
+        <div class="note" data-i18n="invite.note">// QR firmato · ruolo assegnato · scadenza configurabile</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="kicker reveal"><span class="eyebrow" data-i18n="custom.eyebrow">Su misura per la produzione</span></div>
+    <h2 class="reveal" data-i18n="custom.h2">Ogni postazione prende il nome del proprio ruolo.</h2>
+    <p class="sub reveal" data-i18n="custom.sub">Puoi rinominare le etichette, configurare partyline e circuiti IFB e vedere chi sta parlando. Al primo avvio, una procedura guidata collega la stanza LiveKit; la configurazione viene condivisa con le postazioni connesse.</p>
+    <div class="feat flip">
+      <div class="feat-text reveal">
+        <div class="eyebrow" data-i18n="custom.labels">ETICHETTE · PARTYLINE · CONFIGURAZIONE</div>
+        <h3 data-i18n="custom.h3">La matrice parla la lingua della tua regia.</h3>
+        <p data-i18n="custom.p">«CAM 2» diventa «Camera 2 · Regia»; una partyline riunisce il reparto tecnico, un'altra la produzione; un IFB porta il segnale program all'ospite. I dettagli includono TALK momentaneo o a linea aperta, LISTEN per postazione e livelli per crosspoint.</p>
+        <div class="note" data-i18n="custom.note">// partyline configurabili · IFB dedicati · nomi personalizzabili</div>
+      </div>
+      <div class="feat-shot reveal"><div class="frame"><iframe src="assets/anim/etichette.html" class="mx-embed" title="Rinomina di una postazione: da CAM 2 a Camera 2 · Regia" data-i18n="custom.frame" data-i18n-attr="title" style="aspect-ratio:760/560"></iframe></div></div>
+    </div>
+    <div class="stats reveal">
+      <div class="stat"><div class="n"><span>16</span></div><div class="l" data-i18n="stats.n1">N-1 su interfacce compatibili</div></div>
+      <div class="stat"><div class="n">QR</div><div class="l" data-i18n="stats.qr">invito firmato per ruolo</div></div>
+      <div class="stat"><div class="n">3</div><div class="l" data-i18n="stats.platforms">piattaforme · iOS iPadOS macOS</div></div>
+      <div class="stat"><div class="n">1</div><div class="l" data-i18n="stats.matrix">matrice software configurabile</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="piattaforme" class="band">
+  <div class="wrap">
+    <div class="kicker reveal"><span class="eyebrow" data-i18n="platforms.eyebrow">Piattaforme</span></div>
+    <h2 class="reveal" data-i18n="platforms.h2">Nativa sui dispositivi che la troupe usa già.</h2>
+    <div class="plats">
+      <div class="plat reveal">
+        <div class="p-ico">iPHONE</div>
+        <h3 data-i18n="platforms.iphone.h3">Il beltpack</h3>
+        <p data-i18n="platforms.iphone.p">Push-to-talk in tasca per operatori, inviati e conduttori. Accesso tramite link; il funzionamento a schermo bloccato è in validazione beta.</p>
+      </div>
+      <div class="plat reveal">
+        <div class="p-ico">iPAD</div>
+        <h3 data-i18n="platforms.ipad.h3">Il pannello</h3>
+        <p data-i18n="platforms.ipad.p">Un pannello della matrice a portata di dito, per regia mobile e postazioni tecniche. Talk, listen, livelli e gruppi.</p>
+      </div>
+      <div class="plat reveal">
+        <div class="p-ico">MAC</div>
+        <h3 data-i18n="platforms.mac.h3">La centrale</h3>
+        <p data-i18n="platforms.mac.p">La regia gestisce la matrice e i circuiti N-1 dall'interfaccia Dante: invita le postazioni e instrada le comunicazioni.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="close">
+  <div class="wrap">
+    <div class="eyebrow reveal" style="justify-content:center;display:block;text-align:center" data-i18n="close.eyebrow">Pensato per il broadcast</div>
+    <h2 class="reveal" style="margin-top:14px" data-i18n-html="close.h2">L'intercom della regia,<br>dalla sala alle produzioni remote.</h2>
+    <p class="reveal" data-i18n="close.p">La matrice resta in regia. Le voci arrivano dove servono.</p>
+    <div class="avail reveal" data-i18n-html="close.avail">iPHONE · iPAD · MAC — <span style="color:var(--green)">BETA SU TESTFLIGHT</span></div>
+    <div class="reveal" style="text-align:center;margin-top:30px">
+      <a href="../vortex-site/" class="eco-cta" data-i18n="close.cta">← Torna all'ecosistema VORTEX</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span data-i18n="foot.status">VORTEX INTERCOM · in test su TestFlight</span>
+    <span class="foot-priv" data-i18n="foot.privacy">La landing non usa cookie, analytics, profilazione o raccolta dati.</span>
+    <span>© 2026 Daniele Cappello</span>
+  </div>
+  <div class="wrap foot-eco">
+    <a href="../vortex-site/" data-i18n="foot.eco">Ecosistema</a>
+    <a href="../vortex-control/" data-i18n="foot.regia">Regia</a>
+    <a href="../vortex-communication-os/">Meet</a>
+    <a href="../vortex-ai-graphic-studio/" data-i18n="foot.graphics">Grafiche</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var I18N = {
+    it: {
+      "meta.title":"VORTEX Intercom — la matrice di regia su iPhone, iPad e Mac",
+      "skip":"Salta al contenuto",
+      "meta.desc":"Intercom software in beta test esterno con TALK, LISTEN, partyline, IFB e supporto fino a 16 N-1 su interfacce compatibili, per iPhone, iPad e Mac.",
+      "nav.eco":"← ECOSISTEMA","nav.matrix":"MATRICE","nav.invite":"INVITO","nav.platforms":"PIATTAFORME",
+      "hero.eyebrow":"Intercom broadcast · iOS · iPadOS · macOS","hero.beta":"● BETA · IN TEST SU TESTFLIGHT",
+      "hero.h1":"La matrice di regia,<br><span class='glow'>virtualizzata.</span>",
+      "hero.lead":"TALK, LISTEN, partyline, IFB e supporto fino a <b>16 N-1 differenziati su interfacce compatibili</b>. Un intercom software basato sul modello delle matrici broadcast, per iPhone, iPad e Mac. La regia assegna una postazione con un link o un QR firmato.",
+      "hero.frame":"Matrice VORTEX Intercom in funzione",
+      "principle.eyebrow":"Il principio","principle.h2":"Il modello della matrice broadcast, in software.",
+      "principle.sub":"Una matrice di crosspoint definisce chi parla con chi, a che volume e chi ascolta. VORTEX porta questa logica sui dispositivi supportati, senza richiedere una matrice intercom proprietaria dedicata; il trasporto audio usa LiveKit/WebRTC.",
+      "principle.old.eyebrow":"Matrice hardware","principle.old.h3":"Il rack tradizionale",
+      "principle.old.f1":"Matrice fisica, beltpack cablati e cavi dedicati","principle.old.f2":"Installazione, configurazione e manutenzione dedicate","principle.old.f3":"Vincolata alla sala regia","principle.old.f4":"Ogni nuova postazione richiede altro hardware",
+      "principle.new.h3":"La matrice, in app","principle.new.f1":"iPhone, iPad e Mac diventano pannelli e beltpack","principle.new.f2":"La regia gestisce la matrice; le postazioni accedono tramite link","principle.new.f3":"Studio, esterna o postazione remota, compatibilmente con la rete","principle.new.f4":"Una postazione aggiuntiva richiede un invito, non altro hardware",
+      "n1.eyebrow":"La funzione che conta","n1.h2":"Fino a 16 N-1 differenziati su interfacce multicanale compatibili.",
+      "n1.sub":"Ogni partecipante ha bisogno del proprio ritorno: il segnale program senza la sua voce. VORTEX può assegnare ciascun N-1 a un canale distinto di un'interfaccia CoreAudio multicanale compatibile — per esempio una Dante Virtual Soundcard — fino a sedici circuiti indipendenti.",
+      "n1.h3":"Un ritorno su misura per ogni partecipante.","n1.p":"Il menu della sorgente PGM mostra i canali dell'interfaccia uno per uno. Puoi assegnarne uno alla conduttrice, uno all'inviato e un altro alla seconda voce: ciascuno riceve il mix necessario senza il ritorno della propria voce.",
+      "n1.note":"// fino a 16 circuiti N-1 indipendenti da una sola interfaccia","n1.frame":"Assegnazione di un N-1 da un canale dell'interfaccia audio",
+      "invite.eyebrow":"La postazione è un link","invite.h2":"La regia invita. La postazione entra in pochi passaggi.",
+      "invite.sub":"Niente account né installazioni per gli ospiti. La regia genera un invito per una postazione — un QR o un link con scadenza — e chi lo riceve apre l'intercom sul telefono. Il beltpack offre push-to-talk, volume in cuffia e controllo dell'ascolto.",
+      "invite.beltpackFrame":"Beltpack su iPhone: push-to-talk e volume in cuffia","invite.qrFrame":"Generazione dell'invito tramite QR e link con scadenza",
+      "invite.h3":"Un beltpack che sta in tasca.","invite.p":"Ogni invito è firmato, assegna un ruolo specifico e può avere una scadenza. Sul telefono, l'ospite trova push-to-talk, modalità momentanea o a linea aperta, volume in cuffia e controllo dell'ascolto.","invite.note":"// QR firmato · ruolo assegnato · scadenza configurabile",
+      "custom.eyebrow":"Su misura per la produzione","custom.h2":"Ogni postazione prende il nome del proprio ruolo.",
+      "custom.sub":"Puoi rinominare le etichette, configurare partyline e circuiti IFB e vedere chi sta parlando. Al primo avvio, una procedura guidata collega la stanza LiveKit; la configurazione viene condivisa con le postazioni connesse.",
+      "custom.labels":"ETICHETTE · PARTYLINE · CONFIGURAZIONE","custom.h3":"La matrice parla la lingua della tua regia.",
+      "custom.p":"«CAM 2» diventa «Camera 2 · Regia»; una partyline riunisce il reparto tecnico, un'altra la produzione; un IFB porta il segnale program all'ospite. I dettagli includono TALK momentaneo o a linea aperta, LISTEN per postazione e livelli per crosspoint.",
+      "custom.note":"// partyline configurabili · IFB dedicati · nomi personalizzabili","custom.frame":"Rinomina di una postazione: da CAM 2 a Camera 2 · Regia",
+      "stats.n1":"N-1 su interfacce compatibili","stats.qr":"invito firmato per ruolo","stats.platforms":"piattaforme · iOS iPadOS macOS","stats.matrix":"matrice software configurabile",
+      "platforms.eyebrow":"Piattaforme","platforms.h2":"Nativa sui dispositivi che la troupe usa già.",
+      "platforms.iphone.h3":"Il beltpack","platforms.iphone.p":"Push-to-talk in tasca per operatori, inviati e conduttori. Accesso tramite link; il funzionamento a schermo bloccato è in validazione beta.",
+      "platforms.ipad.h3":"Il pannello","platforms.ipad.p":"Un pannello della matrice a portata di dito, per regia mobile e postazioni tecniche. Talk, listen, livelli e gruppi.",
+      "platforms.mac.h3":"La centrale","platforms.mac.p":"La regia gestisce la matrice e i circuiti N-1 dall'interfaccia Dante: invita le postazioni e instrada le comunicazioni.",
+      "close.eyebrow":"Pensato per il broadcast","close.h2":"L'intercom della regia,<br>dalla sala alle produzioni remote.","close.p":"La matrice resta in regia. Le voci arrivano dove servono.",
+      "close.avail":"iPHONE · iPAD · MAC — <span style='color:var(--green)'>BETA SU TESTFLIGHT</span>","close.cta":"← Torna all'ecosistema VORTEX",
+      "foot.status":"VORTEX INTERCOM · in test su TestFlight","foot.privacy":"La landing non usa cookie, analytics, profilazione o raccolta dati.","foot.eco":"Ecosistema","foot.regia":"Regia","foot.graphics":"Grafiche"
+    },
+    en: {
+      "meta.title":"VORTEX Intercom — the control-room matrix on iPhone, iPad and Mac",
+      "skip":"Skip to content",
+      "meta.desc":"Software intercom in external beta testing with TALK, LISTEN, party-line, IFB and support for up to 16 N-1 circuits on compatible interfaces, for iPhone, iPad and Mac.",
+      "nav.eco":"← ECOSYSTEM","nav.matrix":"MATRIX","nav.invite":"INVITE","nav.platforms":"PLATFORMS",
+      "hero.eyebrow":"Broadcast intercom · iOS · iPadOS · macOS","hero.beta":"● BETA · TESTFLIGHT TESTING",
+      "hero.h1":"The control-room matrix,<br><span class='glow'>virtualized.</span>",
+      "hero.lead":"TALK, LISTEN, party-line, IFB and support for up to <b>16 differentiated N-1 circuits on compatible interfaces</b>. A software intercom based on the broadcast matrix model, for iPhone, iPad and Mac. The control room assigns a position through a signed link or QR code.",
+      "hero.frame":"VORTEX Intercom matrix in operation",
+      "principle.eyebrow":"The principle","principle.h2":"The broadcast matrix model, in software.",
+      "principle.sub":"A crosspoint matrix defines who talks to whom, at what level and who listens. VORTEX brings this logic to supported devices without requiring a dedicated proprietary intercom matrix; audio transport uses LiveKit/WebRTC.",
+      "principle.old.eyebrow":"Hardware matrix","principle.old.h3":"The traditional rack",
+      "principle.old.f1":"Physical matrix, wired beltpacks and dedicated cabling","principle.old.f2":"Dedicated installation, configuration and maintenance","principle.old.f3":"Bound to the control room","principle.old.f4":"Each new position requires more hardware",
+      "principle.new.h3":"The matrix, in an app","principle.new.f1":"iPhone, iPad and Mac become panels and beltpacks","principle.new.f2":"The control room manages the matrix; positions join through a link","principle.new.f3":"Studio, remote production or off-site position, subject to connectivity","principle.new.f4":"An additional position requires an invitation, not more hardware",
+      "n1.eyebrow":"The essential function","n1.h2":"Up to 16 differentiated N-1 circuits on compatible multichannel interfaces.",
+      "n1.sub":"Each participant needs a return feed with their own voice removed. VORTEX can assign every N-1 to a separate channel on a compatible multichannel CoreAudio interface, such as Dante Virtual Soundcard, for up to sixteen independent circuits.",
+      "n1.h3":"A tailored return for every participant.","n1.p":"The PGM source menu lists the interface channels individually. Assign one to the presenter, one to the reporter and another to a second voice: each receives the required mix without hearing their own voice returned.",
+      "n1.note":"// up to 16 independent N-1 circuits from one interface","n1.frame":"Assigning an N-1 from an audio-interface channel",
+      "invite.eyebrow":"A position is a link","invite.h2":"The control room invites. The position joins in a few steps.",
+      "invite.sub":"No guest account or installation. The control room generates an invitation for a position — an expiring QR code or link — and the recipient opens the intercom on a phone. The beltpack provides push-to-talk, headphone volume and listening control.",
+      "invite.beltpackFrame":"Beltpack on iPhone: push-to-talk and headphone volume","invite.qrFrame":"Generating an invitation through an expiring QR code and link",
+      "invite.h3":"A beltpack that fits in a pocket.","invite.p":"Each invitation is signed, assigns a specific role and can have an expiration. On the phone, the guest has push-to-talk, momentary or latch mode, headphone volume and listening control.","invite.note":"// signed QR · assigned role · configurable expiration",
+      "custom.eyebrow":"Configured for the production","custom.h2":"Each position takes the name of its role.",
+      "custom.sub":"Rename labels, configure party-lines and IFB circuits, and see who is talking. On first launch, a guided setup connects the LiveKit room; the configuration is shared with connected positions.",
+      "custom.labels":"LABELS · PARTY-LINE · SETUP","custom.h3":"The matrix speaks the language of your control room.",
+      "custom.p":"“CAM 2” becomes “Camera 2 · Control”; one party-line groups the technical team, another production; an IFB carries the program feed to the guest. Controls include momentary or latched TALK, LISTEN per position and crosspoint levels.",
+      "custom.note":"// configurable party-lines · dedicated IFBs · custom labels","custom.frame":"Renaming a position from CAM 2 to Camera 2 · Control",
+      "stats.n1":"N-1 on compatible interfaces","stats.qr":"signed role invitation","stats.platforms":"platforms · iOS iPadOS macOS","stats.matrix":"configurable software matrix",
+      "platforms.eyebrow":"Platforms","platforms.h2":"Native on devices the crew already uses.",
+      "platforms.iphone.h3":"The beltpack","platforms.iphone.p":"Pocket push-to-talk for operators, reporters and presenters. Link access; locked-screen operation is undergoing beta validation.",
+      "platforms.ipad.h3":"The panel","platforms.ipad.p":"A touch matrix panel for mobile control rooms and technical positions. Talk, listen, levels and groups.",
+      "platforms.mac.h3":"The central station","platforms.mac.p":"The control room manages the matrix and N-1 circuits from the Dante interface, invites positions and routes communications.",
+      "close.eyebrow":"Made for broadcast","close.h2":"Control-room intercom,<br>from the studio to remote productions.","close.p":"The matrix stays in control. Voices go where they are needed.",
+      "close.avail":"iPHONE · iPAD · MAC — <span style='color:var(--green)'>TESTFLIGHT BETA</span>","close.cta":"← Back to the VORTEX ecosystem",
+      "foot.status":"VORTEX INTERCOM · under TestFlight testing","foot.privacy":"This landing page uses no cookies, analytics, profiling or data collection.","foot.eco":"Ecosystem","foot.regia":"Control","foot.graphics":"Graphics"
+    }
+  };
+  function applyLang(lang) {
+    var d = I18N[lang] || I18N.it;
+    document.documentElement.lang = lang;
+    document.title = d["meta.title"] || document.title;
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta && d["meta.desc"]) meta.setAttribute("content", d["meta.desc"]);
+    document.querySelectorAll('[data-i18n]:not([data-i18n-attr])').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      if (d[key] != null) el.textContent = d[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-html');
+      if (d[key] != null) el.innerHTML = d[key];
+    });
+    document.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      var attr = el.getAttribute('data-i18n-attr');
+      if (d[key] != null) el.setAttribute(attr, d[key]);
+    });
+    document.querySelectorAll('.langsw button').forEach(function (button) {
+      var selected = button.getAttribute('data-lang') === lang;
+      button.classList.toggle('on', selected);
+      button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+  }
+  var query = null;
+  try { query = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+  if (query !== 'it' && query !== 'en') query = null;
+  applyLang(query || ((navigator.language || 'it').toLowerCase().indexOf('it') === 0 ? 'it' : 'en'));
+  document.querySelectorAll('.langsw button').forEach(function (button) {
+    button.addEventListener('click', function () { applyLang(button.getAttribute('data-lang')); });
+  });
+})();
+
+window.addEventListener('message', function (e) {
+  if (e.data && e.data.mxHeight) {
+    document.querySelectorAll('iframe.mx-embed').forEach(function (f) {
+      if (f.contentWindow === e.source) f.style.height = e.data.mxHeight + 'px';
+    });
+  }
+});
+  // ---- Signature: griglia di crosspoint viva ----
+  // La matrice "chi-parla-con-chi": nodi in griglia, alcuni accesi che pulsano
+  // in ciano/verde/rosso, con brevi linee di routing. Sottile, dietro l'hero.
+  (function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const c = document.getElementById('xpoint');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    let W, H, nodes = [], t = 0;
+    const GAP = 46, COLORS = ['#3fd7ea', '#30d158', '#ff453a'];
+    function build() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = c.clientWidth; H = c.clientHeight;
+      c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      nodes = [];
+      for (let y = GAP; y < H - 10; y += GAP)
+        for (let x = GAP; x < W - 10; x += GAP) {
+          const live = Math.random() < 0.07;
+          nodes.push({ x, y, live, col: COLORS[(Math.random() * COLORS.length) | 0], ph: Math.random() * Math.PI * 2, sp: 0.6 + Math.random() * 0.8 });
+        }
+    }
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      t += 0.016;
+      for (const n of nodes) {
+        if (n.live) {
+          const p = 0.5 + 0.5 * Math.sin(t * n.sp + n.ph);
+          ctx.beginPath(); ctx.arc(n.x, n.y, 1.6 + p * 2.4, 0, 7);
+          ctx.fillStyle = n.col; ctx.globalAlpha = 0.25 + p * 0.6; ctx.fill();
+          ctx.beginPath(); ctx.arc(n.x, n.y, 8 + p * 6, 0, 7);
+          ctx.strokeStyle = n.col; ctx.globalAlpha = 0.06 + p * 0.10; ctx.lineWidth = 1; ctx.stroke();
+        } else {
+          ctx.beginPath(); ctx.arc(n.x, n.y, 1.1, 0, 7);
+          ctx.fillStyle = '#2a3138'; ctx.globalAlpha = 0.8; ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(draw);
+    }
+    build(); draw();
+    let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200); });
+  })();
+
+  // ---- Scroll reveal ----
+  (function () {
+    const els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    els.forEach((e, i) => { e.style.transitionDelay = (Math.min(i % 4, 3) * 0.06) + 's'; io.observe(e); });
+  })();
+</script>
+</body>
+</html>

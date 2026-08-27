@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:'Inter';src:url('../fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:'JetBrains Mono';src:url('../fonts/JetBrainsMono-500.woff2') format('woff2');font-weight:500;font-display:block}
+  :root{--void:#08090b;--panel2:#0b0e12;--line:rgba(255,255,255,.08);--cyan:#3fd7ea;--ink:#e9eef2;--dim:#7a848f}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#050607;padding:30px;font-family:'Inter'}
+  .et{position:relative;width:760px;background:linear-gradient(180deg,#0a0c0f,#08090b);border:1px solid var(--line);border-radius:18px;padding:28px 30px 32px;overflow:hidden}
+  .kick .e{font-family:'JetBrains Mono';font-weight:500;font-size:12px;letter-spacing:.16em;color:var(--cyan);text-transform:uppercase}
+  .kick .s{font-family:'Inter';font-weight:500;font-size:15px;color:var(--dim);margin-top:8px}
+  .port{width:340px;margin-top:24px;background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:16px 16px 17px;transition:border-color .5s,box-shadow .5s}
+  .port.done{border-color:rgba(63,215,234,.5);box-shadow:0 0 0 1px rgba(63,215,234,.22)}
+  .port .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+  .port .nm{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk';font-weight:600;font-size:16px;color:var(--ink)}
+  .port .d{width:9px;height:9px;border-radius:50%;background:#8b94a0;transition:background .4s,box-shadow .4s}
+  .port.done .d{background:var(--cyan);box-shadow:0 0 9px var(--cyan)}
+  .port .ty{font-family:'JetBrains Mono';font-weight:500;font-size:10px;letter-spacing:.12em;color:var(--dim)}
+  .port .talk{height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:13px;letter-spacing:.14em;background:rgba(255,255,255,.015);border:1px solid var(--line);color:var(--dim)}
+  .panel{margin-top:26px;width:520px;background:#0c1014;border:1px solid var(--line);border-radius:14px;padding:22px 22px 24px}
+  .panel h4{font-family:'Space Grotesk';font-weight:700;font-size:18px;color:var(--ink);margin-bottom:16px}
+  .inp{font-family:'JetBrains Mono';font-size:17px;color:var(--ink);background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;padding:14px 16px;transition:border-color .3s}
+  .inp.focus{border-color:var(--cyan);box-shadow:0 0 0 1px rgba(63,215,234,.3)}
+  .inp .cx{display:inline-block;width:1.5px;height:18px;background:var(--cyan);margin-left:1px;vertical-align:-3px;opacity:0}
+  .inp.focus .cx{animation:caret .8s steps(1) infinite}
+  @keyframes caret{0%,100%{opacity:1}50%{opacity:0}}
+  .prow{display:flex;align-items:center;justify-content:space-between;margin-top:20px}
+  .cancel{font-family:'Inter';font-weight:500;font-size:15px;color:var(--dim)}
+  .save{font-family:'Space Grotesk';font-weight:700;font-size:15px;color:#04222a;background:var(--cyan);border-radius:10px;padding:11px 24px;transition:box-shadow .2s}
+  .save.hot{box-shadow:0 0 24px rgba(63,215,234,.55)}
+  #cursor{position:absolute;left:0;top:0;z-index:30;transition:transform .55s cubic-bezier(.5,.05,.2,1);pointer-events:none}
+  #cursor .ring{position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;border:2px solid var(--cyan);background:rgba(63,215,234,.16);box-shadow:0 0 14px rgba(63,215,234,.45)}
+  #cursor.tap .ring{animation:tap .32s ease}
+  @keyframes tap{0%{transform:scale(1)}45%{transform:scale(.6)}100%{transform:scale(1)}}
+  #hint{position:absolute;left:30px;bottom:22px;font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#04222a;background:var(--cyan);padding:7px 13px;border-radius:8px;box-shadow:0 6px 20px rgba(63,215,234,.3);opacity:0;transition:opacity .3s,transform .3s;transform:translateY(6px)}
+  #hint.show{opacity:1;transform:translateY(0)}
+  #hint b{font-weight:700}
+</style></head>
+<body>
+  <div class="et" id="et">
+    <div class="kick"><div class="e">Etichette su misura</div><div class="s">Ogni porta prende il nome del suo ruolo in produzione.</div></div>
+    <div class="port" id="port">
+      <div class="top"><div class="nm"><span class="d"></span><span class="pnm" id="pnm">CAM 2</span></div><div class="ty">BELTPACK</div></div>
+      <div class="talk">TALK</div>
+    </div>
+    <div class="panel">
+      <h4>Rinomina porta</h4>
+      <div class="inp" id="inp"><span class="tx" id="tx"></span><span class="cx"></span></div>
+      <div class="prow"><div class="cancel">Annulla</div><div class="save" id="save">Rinomina</div></div>
+    </div>
+    <div id="cursor"><span class="ring"></span></div>
+    <div id="hint"></div>
+  </div>
+<script>
+  const et=document.getElementById('et'),cursor=document.getElementById('cursor'),hint=document.getElementById('hint');
+  const port=document.getElementById('port'),pnm=document.getElementById('pnm'),inp=document.getElementById('inp'),tx=document.getElementById('tx'),save=document.getElementById('save');
+  const NEW='Camera 2 · Regia';
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  function moveTo(el,fx,fy){const r=el.getBoundingClientRect(),m=et.getBoundingClientRect();cursor.style.transform=`translate(${r.left-m.left+r.width*(fx??.5)}px,${r.top-m.top+r.height*(fy??.5)}px)`;return sleep(560);}
+  function tap(){cursor.classList.add('tap');setTimeout(()=>cursor.classList.remove('tap'),340);}
+  function say(h){hint.innerHTML=h;hint.classList.add('show');}function mute(){hint.classList.remove('show');}
+  async function type(t){for(const ch of t){tx.textContent+=ch;await sleep(60);}}
+  async function demo(){
+    while(true){
+      port.classList.remove('done'); pnm.textContent='CAM 2'; tx.textContent=''; inp.classList.remove('focus'); save.classList.remove('hot'); mute(); await sleep(900);
+      say('Rinomina la <b>porta</b>');
+      await moveTo(inp,.12,.5); tap(); inp.classList.add('focus'); await sleep(400);
+      await type(NEW); await sleep(500);
+      await moveTo(save); tap(); save.classList.add('hot'); await sleep(320); save.classList.remove('hot'); inp.classList.remove('focus');
+      pnm.textContent=NEW; port.classList.add('done'); await sleep(2600);
+      mute(); await sleep(800);
+    }
+  }
+  demo();
+</script>
+
+<style>html,body{margin:0!important;padding:0!important;background:transparent!important;overflow:hidden!important;display:block!important}</style>
+<script>(function(){var root=document.body.firstElementChild;function fit(){root.style.transformOrigin='top left';var dw=root.offsetWidth||1;var s=innerWidth/dw;root.style.transform='scale('+s+')';var h=Math.ceil(root.offsetHeight*s);document.body.style.height=h+'px';try{parent.postMessage({mxHeight:h},'*')}catch(e){}}addEventListener('resize',fit);addEventListener('load',fit);setTimeout(fit,60);setTimeout(fit,400);setInterval(fit,1500)})();</script>
+</body></html>

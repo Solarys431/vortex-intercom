@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:'Space Grotesk';src:url('../fonts/SpaceGrotesk-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:'JetBrains Mono';src:url('../fonts/JetBrainsMono-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:'JetBrains Mono';src:url('../fonts/JetBrainsMono-700.woff2') format('woff2');font-weight:700;font-display:block}
+  :root{--void:#08090b;--line:rgba(255,255,255,.09);--cyan:#3fd7ea;--green:#4ade80;--ink:#e9eef2;--dim:#7a848f}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#050607;padding:30px;font-family:'JetBrains Mono';display:flex;justify-content:center}
+  .stage{position:relative;width:358px}
+  .phone{width:340px;height:710px;background:#0a0c0f;border:9px solid #16191d;border-radius:44px;padding:24px 22px;position:relative;overflow:hidden;box-shadow:0 40px 90px -40px #000}
+  .ph-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .brand{font-family:'Space Grotesk';font-weight:700;font-size:15px;letter-spacing:.02em;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .brand .d{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .brand b{color:var(--cyan)}
+  .cam{font-family:'JetBrains Mono';font-weight:700;font-size:12px;letter-spacing:.08em;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 12px}
+  .talkin{margin:16px 0 0;text-align:center;font-family:'JetBrains Mono';font-weight:700;font-size:12.5px;letter-spacing:.1em;color:var(--green);border:1px solid rgba(74,222,128,.4);border-radius:12px;padding:12px;background:rgba(74,222,128,.07);display:flex;align-items:center;justify-content:center;gap:9px;opacity:0;transition:opacity .35s}
+  .talkin.show{opacity:1}
+  .talkin i{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+  .ptt{width:236px;height:236px;border-radius:50%;margin:70px auto 0;border:3px solid var(--cyan);background:radial-gradient(circle at 50% 45%,#0f171b,#0a0e11);display:flex;align-items:center;justify-content:center;text-align:center;
+    font-family:'JetBrains Mono';font-weight:700;font-size:19px;letter-spacing:.06em;line-height:1.35;color:var(--cyan);transition:transform .2s,box-shadow .3s,background .3s}
+  .ptt.press{transform:scale(.965);background:radial-gradient(circle at 50% 45%,#134e5a,#0c2e37);box-shadow:0 0 60px rgba(63,215,234,.6),inset 0 0 40px rgba(63,215,234,.25);color:#eafcff}
+  .seg{display:flex;gap:0;margin-top:60px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .seg div{flex:1;text-align:center;font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.05em;color:var(--dim);padding:14px 6px}
+  .seg .on{background:var(--cyan);color:#04222a;font-weight:700}
+  .vol{margin-top:22px}
+  .vol .l{font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.1em;color:var(--dim);margin-bottom:9px}
+  .vol .bar{height:8px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden;position:relative}
+  .vol .fill{position:absolute;inset:0;transform-origin:left;transform:scaleX(.62);background:linear-gradient(90deg,var(--cyan),#7fe9f5);border-radius:5px;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+  .mute{margin-top:20px;text-align:center;font-family:'JetBrains Mono';font-weight:500;font-size:12px;letter-spacing:.08em;color:var(--dim);border:1px solid var(--line);border-radius:12px;padding:15px}
+  #cursor{position:absolute;left:0;top:0;z-index:30;transition:transform .5s cubic-bezier(.5,.05,.2,1);pointer-events:none}
+  #cursor .ring{position:absolute;left:-13px;top:-13px;width:26px;height:26px;border-radius:50%;border:2px solid #fff;background:rgba(255,255,255,.2);box-shadow:0 0 14px rgba(255,255,255,.4)}
+  #cursor.tap .ring{animation:tap .3s ease}
+  #cursor.grab .ring{background:rgba(255,255,255,.42);transform:scale(.82)}
+  @keyframes tap{0%{transform:scale(1)}45%{transform:scale(.62)}100%{transform:scale(1)}}
+  #hint{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%) translateY(6px);white-space:nowrap;font-family:'JetBrains Mono';font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#04222a;background:var(--cyan);padding:7px 13px;border-radius:8px;box-shadow:0 6px 20px rgba(63,215,234,.3);opacity:0;transition:opacity .3s,transform .3s}
+  #hint.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #hint b{font-weight:700}
+</style></head>
+<body>
+  <div class="stage" id="stage">
+    <div class="phone">
+      <div class="ph-head"><div class="brand"><span class="d"></span>VORTEX <b>MATRIX</b></div><div class="cam">CAM 2</div></div>
+      <div class="talkin" id="talkin"><i></i> LA REGIA TI STA PARLANDO</div>
+      <div class="ptt" id="ptt">TIENI PREMUTO<br>PER PARLARE</div>
+      <div class="seg"><div class="on">PTT · TIENI PREMUTO</div><div>LINEA APERTA · TOCCA</div></div>
+      <div class="vol"><div class="l">VOLUME CUFFIA</div><div class="bar"><div class="fill" id="fill"></div></div></div>
+      <div class="mute">SILENZIA ASCOLTO</div>
+    </div>
+    <div id="cursor"><span class="ring"></span></div>
+    <div id="hint"></div>
+  </div>
+<script>
+  const stage=document.getElementById('stage'),cursor=document.getElementById('cursor'),hint=document.getElementById('hint');
+  const ptt=document.getElementById('ptt'),fill=document.getElementById('fill'),talkin=document.getElementById('talkin');
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  function at(el,fx,fy){const r=el.getBoundingClientRect(),m=stage.getBoundingClientRect();cursor.style.transform=`translate(${r.left-m.left+r.width*(fx??.5)}px,${r.top-m.top+r.height*(fy??.5)}px)`;}
+  function moveTo(el,fx,fy){at(el,fx,fy);return sleep(520);}
+  function tap(){cursor.classList.add('tap');setTimeout(()=>cursor.classList.remove('tap'),300);}
+  function say(h){hint.innerHTML=h;hint.classList.add('show');}function mute(){hint.classList.remove('show');}
+  let lv=0.62;
+  async function demo(){
+    while(true){
+      ptt.classList.remove('press'); ptt.innerHTML='TIENI PREMUTO<br>PER PARLARE'; talkin.classList.remove('show'); fill.style.transform='scaleX(0.62)'; mute(); await sleep(900);
+      // 1 — push to talk
+      say('Tieni premuto per <b>parlare</b>'); await moveTo(ptt); tap(); await sleep(120);
+      ptt.classList.add('press'); ptt.innerHTML='IN ONDA'; await sleep(1900);
+      ptt.classList.remove('press'); ptt.innerHTML='TIENI PREMUTO<br>PER PARLARE'; await sleep(700);
+      // 2 — regola volume cuffia (una volta)
+      say('Regola il <b>volume cuffia</b>'); await moveTo(fill.parentElement,0.62,.5); cursor.classList.add('grab'); await sleep(300);
+      lv=0.9; fill.style.transform='scaleX(0.9)'; at(fill.parentElement,0.9,.5); await sleep(650); cursor.classList.remove('grab'); await sleep(900);
+      // 3 — la regia parla (IFB)
+      say('La regia ti parla in <b>cuffia</b>'); talkin.classList.add('show'); await sleep(2000);
+      mute(); await sleep(700);
+    }
+  }
+  demo();
+</script>
+
+<style>html,body{margin:0!important;padding:0!important;background:transparent!important;overflow:hidden!important;display:block!important}</style>
+<script>(function(){var root=document.body.firstElementChild;function fit(){root.style.transformOrigin='top left';var dw=root.offsetWidth||1;var s=innerWidth/dw;root.style.transform='scale('+s+')';var h=Math.ceil(root.offsetHeight*s);document.body.style.height=h+'px';try{parent.postMessage({mxHeight:h},'*')}catch(e){}}addEventListener('resize',fit);addEventListener('load',fit);setTimeout(fit,60);setTimeout(fit,400);setInterval(fit,1500)})();</script>
+</body></html>
